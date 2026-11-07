@@ -1,0 +1,16 @@
+{
+  "name": "claude-playground",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Small examples calling free, keyless public APIs with Node's built-in fetch.",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "all": "node run-all.js",
+    "weather": "node examples/weather.js",
+    "pokemon": "node examples/pokemon.js",
+    "posts": "node examples/posts.js",
+    "dog": "node examples/dog.js",
+    "books": "node examples/books.js"
+  }
+}
