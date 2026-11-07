@@ -1,0 +1,199 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>API Playground</title>
+<style>
+  :root {
+    --bg: #f6f5f1; --card: #ffffff; --ink: #1c1b19; --muted: #6b6860; --line: #e3e0d8;
+    --accent: #b4232a; --code-bg: #1c1b19; --code-ink: #e8e6df;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #131211; --card: #1c1b19; --ink: #efede6; --muted: #9a968b; --line: #2e2c28;
+            --accent: #ff6b6b; --code-bg: #0c0b0a; --code-ink: #d8d5cc; }
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink);
+         font: 16px/1.5 system-ui, -apple-system, "Segoe UI", sans-serif; }
+  header, main { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+  header { padding-top: 40px; padding-bottom: 8px; }
+  h1 { margin: 0 0 4px; font-size: 1.9rem; letter-spacing: -0.02em; }
+  header p { margin: 0; color: var(--muted); }
+  main { display: grid; gap: 16px; padding-top: 24px; padding-bottom: 48px;
+         grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+  .card { background: var(--card); border: 1px solid var(--line); border-radius: 12px;
+          padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+  .card h2 { margin: 0; font-size: 1.05rem; }
+  .card h2 a { color: var(--muted); font-weight: 400; font-size: .8rem; margin-left: 6px; }
+  .controls { display: flex; gap: 8px; flex-wrap: wrap; }
+  input, select, button { font: inherit; padding: 8px 10px; border-radius: 8px;
+                          border: 1px solid var(--line); background: var(--bg); color: var(--ink); min-width: 0; }
+  input, select { flex: 1; }
+  select { flex: 1 1 110px; }
+  .url { margin-top: 8px; }
+  button { cursor: pointer; background: var(--accent); color: #fff; border-color: var(--accent); font-weight: 600; }
+  button.ghost { background: transparent; color: var(--ink); border-color: var(--line); font-weight: 500; }
+  button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .out { min-height: 80px; }
+  .status { color: var(--muted); font-size: .9rem; }
+  .error { color: var(--accent); font-weight: 600; }
+  .big { font-size: 2.6rem; font-weight: 700; letter-spacing: -0.03em; line-height: 1.1; }
+  .row { display: flex; gap: 14px; align-items: center; }
+  .row img { width: 96px; height: 96px; image-rendering: pixelated; background: var(--bg); border-radius: 10px; }
+  .dog img { width: 100%; max-height: 260px; object-fit: cover; border-radius: 10px; }
+  ul { margin: 0; padding-left: 18px; } li { margin: 4px 0; }
+  .tag { display: inline-block; padding: 1px 8px; border-radius: 99px; background: var(--bg);
+         border: 1px solid var(--line); font-size: .8rem; margin-right: 4px; }
+  details summary { cursor: pointer; color: var(--muted); font-size: .85rem; }
+  pre { margin: 8px 0 0; padding: 12px; background: var(--code-bg); color: var(--code-ink);
+        border-radius: 8px; overflow: auto; max-height: 240px; font-size: .78rem; }
+  .url { font: .75rem ui-monospace, monospace; color: var(--muted); word-break: break-all; }
+</style>
+</head>
+<body>
+<header>
+  <h1>API Playground</h1>
+  <p>Five free, keyless public APIs, called live from your browser. Change an input, hit the button, and open “Raw JSON” to see what came back.</p>
+</header>
+<main>
+
+  <section class="card" id="weather">
+    <h2>Weather <a href="https://open-meteo.com" target="_blank" rel="noopener">Open-Meteo</a></h2>
+    <div class="controls">
+      <select aria-label="City">
+        <option value="35.2271,-80.8431">Charlotte, NC</option>
+        <option value="40.7128,-74.0060">New York, NY</option>
+        <option value="34.0522,-118.2437">Los Angeles, CA</option>
+        <option value="51.5072,-0.1276">London, UK</option>
+        <option value="35.6762,139.6503">Tokyo, JP</option>
+      </select>
+      <button>Get weather</button>
+    </div>
+    <div class="out status">Press the button.</div>
+  </section>
+
+  <section class="card" id="pokemon">
+    <h2>Pokémon <a href="https://pokeapi.co" target="_blank" rel="noopener">PokéAPI</a></h2>
+    <div class="controls">
+      <input aria-label="Pokémon name or number" value="pikachu" placeholder="name or number">
+      <button>Look up</button>
+    </div>
+    <div class="out status">Press the button.</div>
+  </section>
+
+  <section class="card" id="posts">
+    <h2>Posts <a href="https://jsonplaceholder.typicode.com" target="_blank" rel="noopener">JSONPlaceholder</a></h2>
+    <div class="controls">
+      <select aria-label="User">
+        <option value="1">User 1</option><option value="2">User 2</option><option value="3">User 3</option>
+      </select>
+      <button>GET posts</button>
+      <button class="ghost" data-act="post">Send a POST</button>
+    </div>
+    <div class="out status">Press a button. (POST is simulated; nothing is saved.)</div>
+  </section>
+
+  <section class="card dog" id="dog">
+    <h2>Dog <a href="https://dog.ceo/dog-api" target="_blank" rel="noopener">Dog CEO</a></h2>
+    <div class="controls">
+      <input aria-label="Breed (optional)" placeholder="breed, e.g. husky (blank = any)">
+      <button>Fetch dog</button>
+    </div>
+    <div class="out status">Press the button.</div>
+  </section>
+
+  <section class="card" id="books">
+    <h2>Books <a href="https://openlibrary.org/developers/api" target="_blank" rel="noopener">Open Library</a></h2>
+    <div class="controls">
+      <input aria-label="Search books" value="photography" placeholder="search term">
+      <button>Search</button>
+    </div>
+    <div class="out status">Press the button.</div>
+  </section>
+
+</main>
+
+<script type="module">
+const esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+
+async function getJson(url, params = {}, init = {}) {
+  const u = new URL(url);
+  for (const [k, v] of Object.entries(params)) u.searchParams.set(k, v);
+  const res = await fetch(u, { ...init, signal: AbortSignal.timeout(10000) });
+  if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
+  return { data: await res.json(), url: u.toString() };
+}
+
+const raw = (data, url) =>
+  `<div class="url">${esc(url)}</div><details><summary>Raw JSON</summary><pre>${esc(JSON.stringify(data, null, 2))}</pre></details>`;
+
+// Wire a card: run `fn` when its main button (or Enter in the input) is pressed.
+function wire(id, fn) {
+  const card = document.getElementById(id);
+  const out = card.querySelector(".out");
+  const run = async (act) => {
+    out.className = "out status"; out.textContent = "Loading…";
+    try { out.className = "out"; out.innerHTML = await fn(card, act); }
+    catch (e) { out.className = "out error"; out.textContent = `Failed: ${e.message}`; }
+  };
+  card.querySelectorAll("button").forEach((b) => b.addEventListener("click", () => run(b.dataset.act)));
+  card.querySelector("input")?.addEventListener("keydown", (e) => e.key === "Enter" && run());
+  return run;
+}
+
+wire("weather", async (card) => {
+  const [latitude, longitude] = card.querySelector("select").value.split(",");
+  const { data, url } = await getJson("https://api.open-meteo.com/v1/forecast", {
+    latitude, longitude, current: "temperature_2m,wind_speed_10m,relative_humidity_2m",
+    temperature_unit: "fahrenheit", wind_speed_unit: "mph",
+  });
+  const c = data.current;
+  return `<div class="big">${c.temperature_2m}°F</div>
+    <div class="status">Wind ${c.wind_speed_10m} mph · Humidity ${c.relative_humidity_2m}%</div>${raw(data, url)}`;
+});
+
+wire("pokemon", async (card) => {
+  const name = card.querySelector("input").value.trim().toLowerCase() || "pikachu";
+  const { data: p, url } = await getJson(`https://pokeapi.co/api/v2/pokemon/${encodeURIComponent(name)}`);
+  const stats = p.stats.map((s) => `<li>${esc(s.stat.name)}: <b>${s.base_stat}</b></li>`).join("");
+  return `<div class="row"><img alt="${esc(p.name)}" src="${esc(p.sprites.front_default ?? "")}">
+    <div><div class="big" style="font-size:1.6rem">${esc(p.name)} <span class="status">#${p.id}</span></div>
+    <div>${p.types.map((t) => `<span class="tag">${esc(t.type.name)}</span>`).join("")}</div>
+    <div class="status">${p.height / 10} m · ${p.weight / 10} kg</div></div></div>
+    <ul>${stats}</ul>${raw(p, url)}`;
+});
+
+wire("posts", async (card, act) => {
+  if (act === "post") {
+    const payload = { title: "hello", body: "from API Playground", userId: Number(card.querySelector("select").value) };
+    const { data, url } = await getJson("https://jsonplaceholder.typicode.com/posts", {}, {
+      method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(payload),
+    });
+    return `<div>Server replied with new id <b>${data.id}</b></div>${raw(data, "POST " + url)}`;
+  }
+  const { data, url } = await getJson("https://jsonplaceholder.typicode.com/posts", {
+    userId: card.querySelector("select").value, _limit: 4,
+  });
+  return `<ul>${data.map((p) => `<li><b>#${p.id}</b> ${esc(p.title)}</li>`).join("")}</ul>${raw(data, url)}`;
+});
+
+wire("dog", async (card) => {
+  const breed = card.querySelector("input").value.trim().toLowerCase();
+  const path = breed ? `breed/${encodeURIComponent(breed)}/images/random` : "breeds/image/random";
+  const { data, url } = await getJson(`https://dog.ceo/api/${path}`);
+  return `<img alt="Random dog" src="${esc(data.message)}">${raw(data, url)}`;
+});
+
+wire("books", async (card) => {
+  const q = card.querySelector("input").value.trim() || "photography";
+  const { data, url } = await getJson("https://openlibrary.org/search.json", {
+    q, limit: 5, fields: "title,author_name,first_publish_year",
+  });
+  const items = data.docs.map((d) =>
+    `<li><b>${esc(d.title)}</b> — ${esc((d.author_name ?? ["unknown"])[0])} <span class="status">(${d.first_publish_year ?? "n/a"})</span></li>`).join("");
+  return `<div class="status">${data.numFound.toLocaleString()} results</div><ul>${items}</ul>${raw(data, url)}`;
+});
+</script>
+</body>
+</html>
